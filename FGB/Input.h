@@ -1,9 +1,8 @@
 #pragma once
 
-#include <vector>
-
 enum EnumInput
 {
+	NEUTRAL,
 	UP,
 	DOWN,
 	LEFT,
@@ -17,10 +16,21 @@ enum EnumInput
 class Input
 {
 	int Frame;
-	std::vector<EnumInput> Inputs;
+	EnumInput InputType;
+	bool Held;
+	int HeldCounter;
 
 public:
 	Input();
 	~Input();
+
+	int GetFrame() const;
+	EnumInput GetInputType() const;
+	bool IsHeld() const;
+	void StartHolding();
+	void Hold();
+	void StopHolding();
+
+	bool operator == (const EnumInput & rhs);
 };
 
