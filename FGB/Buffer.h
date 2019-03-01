@@ -14,9 +14,10 @@ public:
 	~Buffer();
 
 	void AddInput(Input InputToAdd);
-	void StopHoldingInputs();
+	void StopHoldingInputs(bool StopHolding = true);
 	void Flush();
 	void CutInputs(int FrameCounter);
 	void PrintBuffer() const;
+	std::vector<Input> GetInputs() const;
 };
 

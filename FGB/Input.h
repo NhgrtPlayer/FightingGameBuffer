@@ -28,7 +28,8 @@ class Input
 
 public:
 	Input();
-	Input(int Frame, EnumInput InputType);
+	Input(EnumInput InputType, bool Held = false, int HeldCounter = 0);
+	Input(int Frame, EnumInput InputType, bool Held = false, int HeldCounter = 0);
 	~Input();
 	Input(const Input & rhs);
 	Input & operator = (const Input & rhs);

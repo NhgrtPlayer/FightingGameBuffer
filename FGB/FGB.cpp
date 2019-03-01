@@ -8,7 +8,9 @@
 #include <mutex>
 #include <conio.h>
 #include <windows.h>
+#include <algorithm>
 #include "Buffer.h"
+#include "Move.h"
 
 #define KEY_UP 72
 #define KEY_DOWN 80
@@ -29,6 +31,10 @@ void GetKeyboardInputs(Buffer & buffer, std::vector<EnumInput> & UserInputs)
 	bool DownKeyDown = GetAsyncKeyState(VK_DOWN) & 0x8000;
 	bool LeftKeyDown = GetAsyncKeyState(VK_LEFT) & 0x8000;
 	bool RightKeyDown = GetAsyncKeyState(VK_RIGHT) & 0x8000;
+	bool A_KeyDown = GetAsyncKeyState('A') & 0x8000;
+	bool B_KeyDown = GetAsyncKeyState('B') & 0x8000;
+	bool C_KeyDown = GetAsyncKeyState('C') & 0x8000;
+	bool D_KeyDown = GetAsyncKeyState('D') & 0x8000;
 
 	if (UpKeyDown && LeftKeyDown) {
 		return (UserInputs.push_back(EnumInput::UP_LEFT));
@@ -57,6 +63,18 @@ void GetKeyboardInputs(Buffer & buffer, std::vector<EnumInput> & UserInputs)
 	if (!UpKeyDown && !DownKeyDown && !LeftKeyDown && !RightKeyDown) {
 		UserInputs.push_back(EnumInput::NEUTRAL);
 	}
+	if (A_KeyDown) {
+		UserInputs.push_back(EnumInput::A_BUTTON);
+	}
+	if (B_KeyDown) {
+		UserInputs.push_back(EnumInput::B_BUTTON);
+	}
+	if (C_KeyDown) {
+		UserInputs.push_back(EnumInput::C_BUTTON);
+	}
+	if (D_KeyDown) {
+		UserInputs.push_back(EnumInput::D_BUTTON);
+	}
 }
 
 void AddUserInputsInBuffer(Buffer & buffer, const std::vector<EnumInput> & UserInputs, int FrameCounter)
@@ -64,6 +82,18 @@ void AddUserInputsInBuffer(Buffer & buffer, const std::vector<EnumInput> & UserI
 	for (int i = 0; i < UserInputs.size(); ++i)
 	{
 		buffer.AddInput(Input(FrameCounter, UserInputs[i]));
+	}
+}
+
+void CheckMoves(const std::vector<Move> & UserMoves, const Buffer & buffer)
+{
+	for (auto const &Move : UserMoves)
+	{
+		if (Move.CheckMove(buffer.GetInputs()))
+		{
+			std::cout << "MOVE EXECUTED : " << Move.ToString() << '\n';
+			// FLUSH BUFFER SI LE MOVE DOIT LE FAIRE
+		}
 	}
 }
 
@@ -75,6 +105,15 @@ int main()
 	//std::mutex UserInputsMutex;
 	//std::thread UserInputsThread(GetKeyboardInputs, std::ref(buffer), std::ref(UserInputs), std::ref(UserInputsMutex));
 
+	std::vector<Move> UserMoves;
+	UserMoves.push_back(Move("MoveRight", Input(EnumInput::RIGHT), EnumMovePriority::MOVEMENT));
+	UserMoves.push_back(Move("DashRight", { Input(EnumInput::RIGHT), Input(EnumInput::RIGHT) }, EnumMovePriority::DASH));
+	UserMoves.push_back(Move("Hadoken", { Input(EnumInput::DOWN), Input(EnumInput::DOWN_RIGHT), Input(EnumInput::RIGHT), Input(EnumInput::A_BUTTON) }, EnumMovePriority::SPECIAL_MOVE, true));
+
+	std::sort(UserMoves.begin(), UserMoves.end(), [](const auto& lhs, const auto& rhs)
+	{
+		return (lhs.GetPriority() > rhs.GetPriority());
+	});
 	while (1)
 	{
 		FrameCounter++;

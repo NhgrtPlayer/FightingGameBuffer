@@ -154,10 +154,13 @@
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="FGB.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Move.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Move.h" />
+    <ClInclude Include="MovePriority.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

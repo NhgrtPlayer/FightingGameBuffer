@@ -10,11 +10,19 @@ Input::Input() :
 {
 }
 
-Input::Input(int Frame, EnumInput InputType) :
+Input::Input(EnumInput InputType, bool Held, int HeldCounter) :
+	Frame(0),
+	InputType(InputType),
+	Held(Held),
+	HeldCounter(HeldCounter)
+{
+}
+
+Input::Input(int Frame, EnumInput InputType, bool Held, int HeldCounter) :
 	Frame(Frame),
 	InputType(InputType),
-	Held(false),
-	HeldCounter(0)
+	Held(Held),
+	HeldCounter(HeldCounter)
 {
 }
 
@@ -86,12 +94,12 @@ bool Input::operator == (const EnumInput & rhs)
 
 bool Input::operator == (const Input & rhs)
 {
-	return (InputType == rhs.GetInputType());
+	return (InputType == rhs.GetInputType() && HeldCounter >= rhs.GetHeldCounter());
 }
 
 bool Input::operator != (const Input & rhs)
 {
-	return (InputType != rhs.GetInputType());
+	return (InputType != rhs.GetInputType() || HeldCounter < rhs.GetHeldCounter());
 }
 
 std::string InputToString(const Input & InputToString)

@@ -16,7 +16,8 @@ void Buffer::AddInput(Input InputToAdd)
 	if (InputToAdd == EnumInput::NEUTRAL) {
 		StopHoldingInputs();
 	} else {
-		if (!Inputs.empty() && Inputs.back() == InputToAdd && !StopHolding) {
+		if (!Inputs.empty() && Inputs.back().GetInputType() == InputToAdd.GetInputType() && !StopHolding) {
+			StopHoldingInputs(false);
 			return (Inputs.back().Hold());
 		}
 		StopHolding = false;
@@ -24,9 +25,9 @@ void Buffer::AddInput(Input InputToAdd)
 	}
 }
 
-void Buffer::StopHoldingInputs()
+void Buffer::StopHoldingInputs(bool StopHolding)
 {
-	StopHolding = true;
+	this->StopHolding = StopHolding;
 	for (auto &Input : Inputs) {
 		if (Input.IsHeld()) {
 			Input.StopHolding();
@@ -65,4 +66,9 @@ void Buffer::PrintBuffer() const
 		std::cout << Input;
 		std::cout << '\n';
 	}
+}
+
+std::vector<Input> Buffer::GetInputs() const
+{
+	return (Inputs);
 }
