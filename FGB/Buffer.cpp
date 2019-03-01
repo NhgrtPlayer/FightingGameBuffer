@@ -21,10 +21,6 @@ void Buffer::AddInput(Input InputToAdd)
 		}
 		StopHolding = false;
 		return (Inputs.push_back(InputToAdd));
-		/*if (Inputs.empty()
-			|| Inputs.back() != InputToAdd
-			|| StopHolding) {
-		}*/
 	}
 }
 
@@ -43,15 +39,22 @@ void Buffer::Flush()
 	Inputs.clear();
 }
 
-void Buffer::CutInputs()
+void Buffer::CutInputs(int FrameCounter)
 {
 	if (Inputs.empty()) {
 		return;
 	}
-	int LastFrame = Inputs.back().GetFrame();
-
-	while (LastFrame - Inputs.front().GetFrame() > BUFFER_FRAMES) {
-		Inputs.erase(Inputs.begin());
+	//int LastFrame = Inputs.back().GetFrame();
+	for (size_t i = 0; i < Inputs.size();)
+	{
+		if (!Inputs.empty()
+			&& !Inputs[i].IsHeld()
+			&& FrameCounter - (Inputs[i].GetFrame() + Inputs[i].GetHeldCounter()) > BUFFER_FRAMES)
+		{
+			Inputs.erase(Inputs.begin() + i);
+		} else {
+			++i;
+		}
 	}
 }
 

@@ -16,7 +16,7 @@ public:
 	void AddInput(Input InputToAdd);
 	void StopHoldingInputs();
 	void Flush();
-	void CutInputs();
+	void CutInputs(int FrameCounter);
 	void PrintBuffer() const;
 };
 

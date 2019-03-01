@@ -6,6 +6,7 @@
 #include <chrono>
 #include <thread>
 #include <mutex>
+#include <conio.h>
 #include <windows.h>
 #include "Buffer.h"
 
@@ -22,32 +23,39 @@ void ClearScreen()
 	std::cout << std::flush;
 }
 
-void GetKeyboardInputs(Buffer & buffer, std::vector<EnumInput> & UserInputs, std::mutex & UserInputsMutex)
+void GetKeyboardInputs(Buffer & buffer, std::vector<EnumInput> & UserInputs)
 {
-	while (1)
-	{
-		bool UpKeyDown = GetAsyncKeyState(VK_UP) & 0x8000;
-		bool DownKeyDown = GetAsyncKeyState(VK_DOWN) & 0x8000;
-		bool LeftKeyDown = GetAsyncKeyState(VK_LEFT) & 0x8000;
-		bool RightKeyDown = GetAsyncKeyState(VK_RIGHT) & 0x8000;
+	bool UpKeyDown = GetAsyncKeyState(VK_UP) & 0x8000;
+	bool DownKeyDown = GetAsyncKeyState(VK_DOWN) & 0x8000;
+	bool LeftKeyDown = GetAsyncKeyState(VK_LEFT) & 0x8000;
+	bool RightKeyDown = GetAsyncKeyState(VK_RIGHT) & 0x8000;
 
-		UserInputsMutex.lock();
-		if (UpKeyDown) {
-			UserInputs.push_back(EnumInput::UP);
-		}
-		if (DownKeyDown) {
-			UserInputs.push_back(EnumInput::DOWN);
-		}
-		if (LeftKeyDown) {
-			UserInputs.push_back(EnumInput::LEFT);
-		}
-		if (RightKeyDown) {
-			UserInputs.push_back(EnumInput::RIGHT);
-		}
-		if (!UpKeyDown && !DownKeyDown && !LeftKeyDown && !RightKeyDown) {
-			UserInputs.push_back(EnumInput::NEUTRAL);
-		}
-		UserInputsMutex.unlock();
+	if (UpKeyDown && LeftKeyDown) {
+		return (UserInputs.push_back(EnumInput::UP_LEFT));
+	}
+	if (UpKeyDown && RightKeyDown) {
+		return (UserInputs.push_back(EnumInput::UP_RIGHT));
+	}
+	if (UpKeyDown) {
+		UserInputs.push_back(EnumInput::UP);
+	}
+	if (DownKeyDown && LeftKeyDown) {
+		return (UserInputs.push_back(EnumInput::DOWN_LEFT));
+	}
+	if (DownKeyDown && RightKeyDown) {
+		return (UserInputs.push_back(EnumInput::DOWN_RIGHT));
+	}
+	if (DownKeyDown) {
+		UserInputs.push_back(EnumInput::DOWN);
+	}
+	if (LeftKeyDown) {
+		UserInputs.push_back(EnumInput::LEFT);
+	}
+	if (RightKeyDown) {
+		UserInputs.push_back(EnumInput::RIGHT);
+	}
+	if (!UpKeyDown && !DownKeyDown && !LeftKeyDown && !RightKeyDown) {
+		UserInputs.push_back(EnumInput::NEUTRAL);
 	}
 }
 
@@ -64,19 +72,19 @@ int main()
 	Buffer buffer;
 	int FrameCounter = 0;
 	std::vector<EnumInput> UserInputs;
-	std::mutex UserInputsMutex;
-	std::thread UserInputsThread(GetKeyboardInputs, std::ref(buffer), std::ref(UserInputs), std::ref(UserInputsMutex));
+	//std::mutex UserInputsMutex;
+	//std::thread UserInputsThread(GetKeyboardInputs, std::ref(buffer), std::ref(UserInputs), std::ref(UserInputsMutex));
 
 	while (1)
 	{
 		FrameCounter++;
+		ClearScreen();
 
-		UserInputsMutex.lock();
+		GetKeyboardInputs(buffer, UserInputs);
 		AddUserInputsInBuffer(buffer, UserInputs, FrameCounter);
 		UserInputs.clear();
-		UserInputsMutex.unlock();
 
-		buffer.CutInputs();
+		buffer.CutInputs(FrameCounter);
 
 		buffer.PrintBuffer();
 

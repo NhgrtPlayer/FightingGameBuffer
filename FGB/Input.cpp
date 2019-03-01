@@ -105,8 +105,20 @@ std::string InputToString(const Input & InputToString)
 	case UP:
 		ToReturn = "Up";
 		break;
+	case UP_LEFT:
+		ToReturn = "Up-Left";
+		break;
+	case UP_RIGHT:
+		ToReturn = "Up-Right";
+		break;
 	case DOWN:
 		ToReturn = "Down";
+		break;
+	case DOWN_LEFT:
+		ToReturn = "Down-Left";
+		break;
+	case DOWN_RIGHT:
+		ToReturn = "Down-Right";
 		break;
 	case LEFT:
 		ToReturn = "Left";
