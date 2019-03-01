@@ -5,15 +5,18 @@
 
 class Buffer
 {
-	const int BUFFER_FRAMES = 4;
+	const int BUFFER_FRAMES = 5;
 	std::vector<Input> Inputs;
+	bool StopHolding;
 
 public:
 	Buffer();
 	~Buffer();
 
 	void AddInput(Input InputToAdd);
-	void StopHoldingInput();
+	void StopHoldingInputs();
 	void Flush();
+	void CutInputs();
+	void PrintBuffer() const;
 };
 
